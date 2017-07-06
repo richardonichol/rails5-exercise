@@ -1,24 +1,23 @@
-# README
+Trineo Todo API
+===============
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the Trineo Todo API.  To get started:
 
-Things you may want to cover:
+```
+$ rake db:setup
+$ rake spec
+```
 
-* Ruby version
+The API is quite simple, it represents Todos, and each Todo has many items
 
-* System dependencies
+![Trineo Todo API ERD](doc/erd.png)
 
-* Configuration
+Feature requests
+----------------
 
-* Database creation
+The following new features have been requested for the API:
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- **Add completed flag to Todos** - add a new `completed` boolean flag to the
+  JSON representation of a `Todo`.  A `Todo` is considered to be completed when
+  all of it's `Item`s are completed.  If a `Todo` has no `Item`s, it should
+  be considered *not* completed.
