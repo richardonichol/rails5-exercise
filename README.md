@@ -1,8 +1,30 @@
 Trineo Todo API
 ===============
 
-This is the Trineo Todo API.  To get started:
+This is the Trineo Todo API.  This API is deployed for the fictional Death
+Star Corp who use it to manage pending work.  The most prominent user is
+the chief engineer in the exhaust ports department, who has 5000 todos and
+25,000 items on his todo list.
 
+Instructions
+------------
+- Spend 2 hours max on the feature request below.
+- Work with a complete and 'production ready' mindset, including making
+  commits as you would for a pull request that will be reviewed.
+- Return a zip with your version controlled project via email.
+
+Feature request
+---------------
+
+The following new feature has been requested for the API:
+
+- **Add completed flag to Todos** - add a new `completed` boolean flag to the
+  JSON representation of a `Todo`.  A `Todo` is considered to be completed when
+  all of it's `Item`s are completed.  If a `Todo` has no `Item`s, it should
+  be considered *not* completed.
+
+Setup
+-----
 ```
 $ rake db:setup
 $ rake spec
@@ -71,13 +93,3 @@ $ curl -X PATCH -d 'completed=true' http://localhost:3000/todos/1/items/1
    "completed" : true
 }
 ```
-
-Feature requests
-----------------
-
-The following new features have been requested for the API:
-
-- **Add completed flag to Todos** - add a new `completed` boolean flag to the
-  JSON representation of a `Todo`.  A `Todo` is considered to be completed when
-  all of it's `Item`s are completed.  If a `Todo` has no `Item`s, it should
-  be considered *not* completed.
