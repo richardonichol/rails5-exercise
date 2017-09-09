@@ -97,7 +97,7 @@ $ curl -X PATCH -d 'completed=true' http://localhost:3000/todos/1/items/1
 New Feature Notes
 -----------------
 
-My first observation is that the chief engineers large number of todos and items means we need to consider performance implications carefully. Specifically we need to avoid N+1s when listing todos and make sure todos and items tables are indexed properly.
+My first observation is that the chief engineers large number of todos and items means we need to consider performance implications carefully. Specifically we need to avoid N+1s when listing todos and make sure todos and items tables are indexed properly. todos already does have an index on item_id so we do not have to be concerned about indexes at this stage.
 
 There are a few ways to implement this new feature:
 
@@ -105,8 +105,12 @@ There are a few ways to implement this new feature:
 2 - By caching a completed boolean flag directly on the todos table. This means it may need to be updated any time an item is created, updated, added OR deleted.
 3 - By caching counts of the total number of items AND the number of completed items on the todos table.
 
-Option 1 would make it very difficult (although not impossible) to avoid an N+1 query when listing todos. Essentially it would require a significant modification of the resource collection scope using a group by and attr_accessors for count of completed items per todo and total items per todo. Such an approach complicates the query and potentially introduces some other difficulties with ActiveRecord down the track. A naive implementation of option 1 would calculate rhe counts by omstantiating an AR instance for each record and then performing an in memory count of total/complate items which is **really bad** for performance.
+Option 1 would make it very difficult (although not impossible) to avoid an N+1 query when listing todos. Essentially it would require a significant modification of the resource collection scope using a group by and attr_accessors for count of completed items per todo and total items per todo. Such an approach complicates the query and potentially introduces some other difficulties with ActiveRecord down the track. A naive implementation of option 1 would calculate the counts by instantiating an AR instance for each record and then performing a count of total/complate items for each todo which is **really bad** for performance.
 
 Option 2 is relatively simple to implement and should avoid performance issues without introducing too much complexity. We just need to be careful to properly set the flag and make sure we do so without introducing possible locking issues.
 
 Option 3 can be dismissed as it likely adds complexity without any obvious benefits over option 2.
+
+Having chosen option 2, after adding the flag to the table via a migration we should really write a data migration or rake task which will populate existing todos completed flag and set them correctly. It is then a matter of adding or modifying existing tests to properly capture the desired new functionality and then write the code needed to make these tests pass.
+
+I have written a sample rake task in migration.rake which updates all todos. It may be argued this could be encapsulated in a class method for todos but this envisaged to be a once off so it might be better left
