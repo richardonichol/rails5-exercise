@@ -102,7 +102,7 @@ My first observation is that the chief engineers large number of todos and items
 There are a few ways to implement this new feature:
 
 1 - As a derived boolean flag which is calculated every time it needs to be returned.
-2 - By caching a completed boolean flag directly on the todos table. This means it may need to be updated any time an item is created, updated, added OR deleted.
+2 - By caching a completed boolean flag directly on the todos table. This means it may need to be updated any time an item is created, updated OR deleted.
 3 - By caching counts of the total number of items AND the number of completed items on the todos table.
 
 Option 1 would make it very difficult (although not impossible) to avoid an N+1 query when listing todos. Essentially it would require a significant modification of the resource collection scope using a group by and attr_accessors for count of completed items per todo and total items per todo. Such an approach complicates the query and potentially introduces some other difficulties with ActiveRecord down the track. A naive implementation of option 1 would calculate the counts by instantiating an AR instance for each record and then performing a count of total/complate items for each todo which is **really bad** for performance.
