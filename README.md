@@ -113,4 +113,6 @@ Option 3 can be dismissed as it likely adds complexity without any obvious benef
 
 Having chosen option 2, after adding the flag to the table via a migration we should really write a data migration or rake task which will populate existing todos completed flag and set them correctly. It is then a matter of adding or modifying existing tests to properly capture the desired new functionality and then write the code needed to make these tests pass.
 
-I have written a sample rake task in migration.rake which updates all todos. It may be argued this could be encapsulated in a class method for todos but this envisaged to be a once off so it might be better left
+One other thing to note - by avoiding callback pain and placing the responsibility for keeping todos synchronised with items within the controller, we are assuming that **all** CRUD actions to the database are **always** carried out via the API. This might not be a realistic or completely safe assumption. It also means tests need to explicitly set the todo flag when setting up data since it will not be set by the model.
+
+I have written a sample rake task in migration.rake which updates all todos. It may be argued this could be encapsulated in a class method for todos but this envisaged to be a once off so it might be better left where it is.

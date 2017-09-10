@@ -12,24 +12,33 @@ class ItemsController < ApplicationController
   end
 
   def create
-    @todo = Todo.find(params[:todo_id])
-    @item = @todo.items.create(item_params)
+    ActiveRecord::Base.transaction do
+      # Locking the todo first will prevent possible deadlocks
+      @todo = Todo.lock.find(params[:todo_id])
+      @item = @todo.items.create!(item_params)
+      @todo.update!(completed: @item.completed && !@todo.items.incomplete.exists?)
+    end
     render(json: @item)
   end
 
   def update
-    @todo = Todo.find(params[:todo_id])
-    @item = @todo.items.find(params[:id])
-    @item.update(item_params)
+    ActiveRecord::Base.transaction do
+      @todo = Todo.lock.find(params[:todo_id])
+      @item = @todo.items.find(params[:id])
+      @item.update!(item_params)
+      @todo.update!(completed: @item.completed && !@todo.items.incomplete.exists?)
+    end
     render(json: @item)
   end
 
   def destroy
     @item = Item.find(params[:id])
-    @item.destroy
+    @item.destroy!
+    @item.todo.update!(completed: @item.todo.items.exists? && !@item.todo.items.incomplete.exists?)
   end
 
   private
+
   def item_params
     params.permit(:title, :completed)
   end
